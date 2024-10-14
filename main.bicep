@@ -27,10 +27,6 @@ param appServiceAppName string = 'ie-bank-dev'
 @maxLength(24)
 param appServiceAPIAppName string = 'ie-bank-api-dev'
 @sys.description('The Azure location where the resources will be deployed')
-param azureMonitorName string
-@sys.description('The name of the Application Insights')
-param appInsightsName string
-@sys.description('The Azure location where the resources will be deployed')
 param location string = resourceGroup().location
 @sys.description('The value for the environment variable ENV')
 param appServiceAPIEnvVarENV string
@@ -113,18 +109,3 @@ module appService 'modules/app-service.bicep' = {
 }
 
 output appServiceAppHostName string = appService.outputs.appServiceAppHostName
-
-resource azureMonitor 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
-  name: azureMonitorName
-  location: location
-}
-
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: appInsightsName
-  location: location
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    WorkspaceResourceId: resourceId('Microsoft.OperationalInsights/workspaces', azureMonitorName)
-  }
-}
