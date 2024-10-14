@@ -15,7 +15,7 @@ env:
   RESOURCE_GROUP_DEV: BCSAI2024-DEVOPS-STUDENTS-A-DEV
   RESOURCE_GROUP_UAT: BCSAI2024-DEVOPS-STUDENTS-A-UAT
   SUBSCRIPTION_ID: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
-  USER_ALIAS: sperilla
+  USER_ALIAS: sperillaes
   
 jobs:
   build:
@@ -61,7 +61,7 @@ jobs:
           parameters: ./parameters/dev.parameters.json appServiceAPIEnvVarENV=${{ vars.ENV }} appServiceAPIEnvVarDBHOST=${{ vars.DBHOST }} appServiceAPIEnvVarDBNAME=${{ vars.DBNAME }} appServiceAPIEnvVarDBPASS=${{ secrets.DBPASS }} appServiceAPIDBHostDBUSER=${{ secrets.DBUSER }} appServiceAPIDBHostFLASK_APP=${{ vars.FLASK_APP }} appServiceAPIDBHostFLASK_DEBUG=${{ vars.FLASK_DEBUG }}
           deploymentName: ${{ env.USER_ALIAS }}-dev
 
-  deploy-infra-UAT:
+  deploy-UAT:
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     runs-on: ubuntu-latest
     needs: build
