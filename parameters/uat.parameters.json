@@ -6,19 +6,19 @@
             "value": "nonprod"
         },
         "postgreSQLServerName": {
-            "value": "jvargas-dbsrv-dev"
+            "value": "jvargas-dbsrv-uat"
         },
         "postgreSQLDatabaseName": {
-            "value": "jvargas-db-dev"
+            "value": "jvargas-db-uat"
         },
         "appServicePlanName": {
-            "value": "jvargas-asp-dev"
+            "value": "jvargas-asp-uat"
         },
         "appServiceAPIAppName": {
-            "value": "jvargas-be-dev"
+            "value": "jvargas-be-uat"
         },
         "appServiceAppName": {
-            "value": "jvargas-fe-dev"
+            "value": "jvargas-fe-uat"
         },
         "location": {
             "value": "North Europe"
