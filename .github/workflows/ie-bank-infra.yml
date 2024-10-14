@@ -64,7 +64,7 @@ jobs:
   deploy-infra-UAT:
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     runs-on: ubuntu-latest
-    needs: [build, deploy-dev]
+    needs: build
     environment:
       name: 'UAT'
 
