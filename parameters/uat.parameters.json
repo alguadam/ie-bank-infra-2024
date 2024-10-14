@@ -6,19 +6,19 @@
             "value": "nonprod"
         },
         "postgreSQLServerName": {
-            "value": "sperilla3-dbsrv-dev"
+            "value": "sperilla3-dbsrv-uat"
         },
         "postgreSQLDatabaseName": {
-            "value": "sperilla3-db-dev"
+            "value": "sperilla3-db-uat"
         },
         "appServicePlanName": {
-            "value": "sperilla3-asp-dev"
+            "value": "sperilla3-asp-uat"
         },
         "appServiceAPIAppName": {
-            "value": "sperilla3-be-dev"
+            "value": "sperilla3-be-uat"
         },
         "appServiceAppName": {
-            "value": "sperilla3-fe-dev"
+            "value": "sperilla3-fe-uat"
         },
         "location": {
             "value": "East Asia"
