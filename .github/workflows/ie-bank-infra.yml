@@ -5,6 +5,8 @@ on:
   push:
       paths-ignore:
         - 'scripts/**'
+  pull_request:
+    branches: [ "main" ]
 
 env:
   RESOURCE_GROUP_DEV: BCSAI2024-DEVOPS-PROFESSORS
