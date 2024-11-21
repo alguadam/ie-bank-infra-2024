@@ -3,53 +3,52 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentType": {
-            "value": "dev"
+            "value": "prod"
         },
-         "userAlias": {
+        "userAlias": {
             "value": "apayne"
         },
-         "postgresAdminPassword": {
-            "value": "dev-password-from-keyvault"
+        "postgresAdminPassword": {
+            "value": "prod-password-from-keyvault"
+        },
+        "appServiceAPIEnvVarDBPASS": {
+            "value": "prod-db-pass-from-keyvault"
         },
         "postgreSQLServerName": {
-            "value": "apayne-dbsrv-dev"
+            "value": "apayne-dbsrv-prod"
         },
         "postgreSQLDatabaseName": {
-            "value": "apayne-db-dev"
-        },
-         "appServiceAPIEnvVarDBPASS": {
-            "value": "dev-db-pass-from-keyvault"
+            "value": "apayne-db-prod"
         },
         "appServicePlanName": {
-            "value": "apayne-asp-dev"
+            "value": "apayne-asp-prod"
         },
         "appServiceAPIAppName": {
-            "value": "apayne-be-dev"
+            "value": "apayne-be-prod"
         },
         "appServiceAppName": {
-            "value": "apayne-fe-dev"
+            "value": "apayne-fe-prod"
         },
         "location": {
             "value": "North Europe"
         },
         "appServiceAPIEnvVarENV": {
-            "value": "dev"
+            "value": "prod"
         },
         "appServiceAPIEnvVarDBHOST": {
-            "value": "apayne-dbsrv-dev.postgres.database.azure.com"
+            "value": "apayne-dbsrv-prod.postgres.database.azure.com"
         },
         "appServiceAPIEnvVarDBNAME": {
-            "value": "apayne-db-dev"
+            "value": "apayne-db-prod"
         },
         "appServiceAPIEnvVarDBUSER": {
-            "value": "iebankdbadmin@apayne-dbsrv-dev"
+            "value": "iebankdbadmin@apayne-dbsrv-prod"
         },
         "appServiceAPIDBHostFLASK_APP": {
             "value": "app.py"
         },
         "appServiceAPIDBHostFLASK_DEBUG": {
-            "value": "1"
+            "value": "0"
         }
-
     }
 }

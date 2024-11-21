@@ -24,4 +24,57 @@
             "value": "North Europe"
         }
     }
+}{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environmentType": {
+            "value": "uat"
+        },
+        "userAlias": {
+            "value": "apayne"
+        },
+        "postgresAdminPassword": {
+            "value": "uat-password-from-keyvault"
+        },
+        "appServiceAPIEnvVarDBPASS": {
+            "value": "uat-db-pass-from-keyvault"
+        },
+        "postgreSQLServerName": {
+            "value": "apayne-dbsrv-uat"
+        },
+        "postgreSQLDatabaseName": {
+            "value": "apayne-db-uat"
+        },
+        "appServicePlanName": {
+            "value": "apayne-asp-uat"
+        },
+        "appServiceAPIAppName": {
+            "value": "apayne-be-uat"
+        },
+        "appServiceAppName": {
+            "value": "apayne-fe-uat"
+        },
+        "location": {
+            "value": "North Europe"
+        },
+        "appServiceAPIEnvVarENV": {
+            "value": "uat"
+        },
+        "appServiceAPIEnvVarDBHOST": {
+            "value": "apayne-dbsrv-uat.postgres.database.azure.com"
+        },
+        "appServiceAPIEnvVarDBNAME": {
+            "value": "apayne-db-uat"
+        },
+        "appServiceAPIEnvVarDBUSER": {
+            "value": "iebankdbadmin@apayne-dbsrv-uat"
+        },
+        "appServiceAPIDBHostFLASK_APP": {
+            "value": "app.py"
+        },
+        "appServiceAPIDBHostFLASK_DEBUG": {
+            "value": "1"
+        }
+    }
 }

@@ -1,111 +1,170 @@
-@sys.description('The environment type (nonprod or prod)')
+@sys.description('The environment type')
 @allowed([
-  'nonprod'
+  'dev'
+  'uat'
   'prod'
 ])
-param environmentType string = 'nonprod'
+param environmentType string = 'dev'
+
 @sys.description('The user alias to add to the deployment name')
-param userAlias string = 'aguadamillas'
-@sys.description('The PostgreSQL Server name')
-@minLength(3)
-@maxLength(24)
-param postgreSQLServerName string = 'ie-bank-db-server-dev'
-@sys.description('The PostgreSQL Database name')
-@minLength(3)
-@maxLength(24)
-param postgreSQLDatabaseName string = 'ie-bank-db'
-@sys.description('The App Service Plan name')
-@minLength(3)
-@maxLength(24)
-param appServicePlanName string = 'ie-bank-app-sp-dev'
-@sys.description('The Web App name (frontend)')
-@minLength(3)
-@maxLength(24)
-param appServiceAppName string = 'ie-bank-dev'
-@sys.description('The API App name (backend)')
-@minLength(3)
-@maxLength(24)
-param appServiceAPIAppName string = 'ie-bank-api-dev'
-@sys.description('The Azure location where the resources will be deployed')
-param location string = resourceGroup().location
-@sys.description('The value for the environment variable ENV')
-param appServiceAPIEnvVarENV string
-@sys.description('The value for the environment variable DBHOST')
-param appServiceAPIEnvVarDBHOST string
-@sys.description('The value for the environment variable DBNAME')
-param appServiceAPIEnvVarDBNAME string
-@sys.description('The value for the environment variable DBPASS')
+param userAlias string = 'apayne'
+
+@sys.description('PostgreSQL admin password stored securely in Key Vault')
+@secure()
+param postgresAdminPassword string = keyVault.getSecret('postgres-admin-password')
+
+@sys.description('The value for the environment variable DBPASS stored securely in Key Vault')
 @secure()
 param appServiceAPIEnvVarDBPASS string
+
+
+@sys.description('The PostgreSQL Server name')
+param postgreSQLServerName string = 'ie-bank-db-server-${environmentType}'
+
+@sys.description('The PostgreSQL Database name')
+param postgreSQLDatabaseName string = 'ie-bank-db'
+
+@sys.description('The App Service Plan name')
+param appServicePlanName string = 'ie-bank-app-sp-${environmentType}'
+
+@sys.description('The Web App name (frontend)')
+param appServiceAppName string = 'ie-bank-${environmentType}'
+
+@sys.description('The API App name (backend)')
+param appServiceAPIAppName string = 'ie-bank-api-${environmentType}'
+
+@sys.description('The Azure location where the resources will be deployed')
+param location string = resourceGroup().location
+
+@sys.description('The value for the environment variable ENV')
+param appServiceAPIEnvVarENV string = environmentType
+
+@sys.description('The value for the environment variable DBHOST')
+param appServiceAPIEnvVarDBHOST string = '${postgreSQLServerName}.postgres.database.azure.com'
+
+@sys.description('The value for the environment variable DBNAME')
+param appServiceAPIEnvVarDBNAME string = postgreSQLDatabaseName
+
 @sys.description('The value for the environment variable DBUSER')
-param appServiceAPIDBHostDBUSER string
+param appServiceAPIEnvVarDBUSER string = 'iebankdbadmin@${postgreSQLServerName}'
+
 @sys.description('The value for the environment variable FLASK_APP')
-param appServiceAPIDBHostFLASK_APP string
+param appServiceAPIDBHostFLASK_APP string = 'app.py'
+
 @sys.description('The value for the environment variable FLASK_DEBUG')
-param appServiceAPIDBHostFLASK_DEBUG string
+@allowed(['0', '1'])
+param appServiceAPIDBHostFLASK_DEBUG string = environmentType == 'prod' ? '0' : '1'
 
-resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
-  name: postgreSQLServerName
-  location: location
-  sku: {
-    name: 'Standard_B1ms'
-    tier: 'Burstable'
-  }
-  properties: {
-    administratorLogin: 'iebankdbadmin'
-    administratorLoginPassword: 'IE.Bank.DB.Admin.Pa$$'
-    createMode: 'Default'
-    highAvailability: {
-      mode: 'Disabled'
-      standbyAvailabilityZone: ''
-    }
-    storage: {
-      storageSizeGB: 32
-    }
-    backup: {
-      backupRetentionDays: 7
-      geoRedundantBackup: 'Disabled'
-    }
-    version: '15'
-  }
 
-  resource postgresSQLServerFirewallRules 'firewallRules@2022-12-01' = {
-    name: 'AllowAllAzureServicesAndResourcesWithinAzureIps'
-    properties: {
-      endIpAddress: '0.0.0.0'
-      startIpAddress: '0.0.0.0'
-    }
-  }
-}
+@sys.description('SKU for PostgreSQL (dynamic based on environment)')
+var postgresSku = environmentType == 'prod' ? 'GP_B2ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
 
-resource postgresSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-12-01' = {
-  name: postgreSQLDatabaseName
-  parent: postgresSQLServer
-  properties: {
-    charset: 'UTF8'
-    collation: 'en_US.UTF8'
-  }
-}
+@sys.description('App Service Plan SKU (dynamic based on environment)')
+var appServicePlanSku = environmentType == 'prod' ? 'P1v2' : 'B1'
 
-module appService 'modules/app-service.bicep' = {
-  name: 'appService-${userAlias}'
+@sys.description('App Service Plan capacity (dynamic based on environment)')
+var appServicePlanCapacity = environmentType == 'prod' ? 3 : (environmentType == 'uat' ? 2 : 1)
+
+
+
+//MODULE REFERENCES
+
+// PostgreSQL module --> relational database
+module postgres 'modules/postgres.bicep' = {
+  name: 'postgres-${userAlias}'
   params: {
+    serverName: postgreSQLServerName
+    databaseName: postgreSQLDatabaseName
+    adminPassword: postgresAdminPassword
     location: location
-    environmentType: environmentType
-    appServiceAppName: appServiceAppName
-    appServiceAPIAppName: appServiceAPIAppName
-    appServicePlanName: appServicePlanName
-    appServiceAPIDBHostDBUSER: appServiceAPIDBHostDBUSER
-    appServiceAPIDBHostFLASK_APP: appServiceAPIDBHostFLASK_APP
-    appServiceAPIDBHostFLASK_DEBUG: appServiceAPIDBHostFLASK_DEBUG
-    appServiceAPIEnvVarDBHOST: appServiceAPIEnvVarDBHOST
-    appServiceAPIEnvVarDBNAME: appServiceAPIEnvVarDBNAME
-    appServiceAPIEnvVarDBPASS: appServiceAPIEnvVarDBPASS
-    appServiceAPIEnvVarENV: appServiceAPIEnvVarENV
+    skuName: postgresSku
+  }
+}
+
+
+module keyVault 'modules/key-vault.bicep' = {
+    name: 'keyVault-${userAlias}'
+    params: {
+        location: location
+    }
+}
+
+
+module logAnalytics 'modules/log-analytics.bicep' = {
+    name: 'logAnalytics-${userAlias}'
+    params = {
+        location: location
+    }
+}
+
+
+module appInsights 'modules/application-insights.bicep' = {
+    name: 'appInsights-${userAlias}'
+    params = {
+        location: location
+        logAnalyticsWorkspaceId: logAnalytics.outputs.workspaceId
+
+    }
+}
+
+// App Service Plan --> WHAT DOES THIS DO?? 
+module appServicePlan 'modules/app-service-plan.bicep' = {
+  name: 'appServicePlan-${userAlias}'
+  params: {
+    planName: appServicePlanName
+    location: location
+    skuName: appServicePlanSku
+    capacity: appServicePlanCapacity
+  }
+}
+
+
+module containerRegistry 'modules/container-registry.bicep' = {
+    name: 'containerRegistry-${user-alias}'
+    params = {
+        location: location
+    }
+}
+
+// Azure Static Web App --> frontend
+module frontend 'modules/frontend-app-service.bicep' = {
+  name: 'frontend-${userAlias}'
+  params: {
+    appName: appServiceAppName
+    planId: appServicePlan.outputs.planId
+    location: location
   }
   dependsOn: [
-    postgresSQLDatabase
+    appServicePlan
   ]
 }
 
-output appServiceAppHostName string = appService.outputs.appServiceAppHostName
+
+// Linux App Service --> backend 
+module backend 'modules/backend-app-service.bicep' = {
+  name: 'backend-${userAlias}'
+  params: {
+    appName: appServiceAPIAppName
+    planId: appServicePlan.outputs.planId
+    location: location
+    envVars: {
+      ENV: appServiceAPIEnvVarENV
+      DBHOST: appServiceAPIEnvVarDBHOST
+      DBNAME: appServiceAPIEnvVarDBNAME
+      DBUSER: appServiceAPIEnvVarDBUSER
+      DBPASS: appServiceAPIEnvVarDBPASS
+      FLASK_APP: appServiceAPIDBHostFLASK_APP
+      FLASK_DEBUG: appServiceAPIDBHostFLASK_DEBUG
+    }
+  }
+  dependsOn: [
+    postgres
+    appServicePlan
+    appInsights
+  ]
+}
+
+
+
+output frontendHostName string = frontend.outputs.appHostName
+output backendHostName string = backend.outputs.appHostName
