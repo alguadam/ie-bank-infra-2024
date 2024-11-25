@@ -1,6 +1,9 @@
-param appName string
-param planId string
+param appServiceAppName string
+param appServicePlanId string
 param location string
+param appInsightsInstrumentationKey string 
+param appInsightsConnectionString string
+
 @allowed([
   'dev'
   'uat'
@@ -22,19 +25,24 @@ var frontendConfig = {
 var alwaysOnSetting = frontendConfig[environmentType].alwaysOn
 
 
-resource frontendApp 'Microsoft.Web/sites@2021-02-01' = {
-  name: appName
+
+resource frontendServiceApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: appServiceAppName
   location: location
   properties: {
-    serverFarmId: planId
+    serverFarmId: appServicePlanId
     httpsOnly: true
     siteConfig: {
-      linuxFxVersion: 'NODE|16-lts' 
+      linuxFxVersion: 'NODE|18-lts' 
       alwaysOn: alwaysOnSetting   
       ftpsState: 'FtpsOnly'
       appCommandLine: 'pm2 serve /home/site/wwroot --spa --no-daemon'
     } 
+    appSettings: {
+      APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
+      APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
+    }
   }
 }
 
-output appHostName string = frontendApp.properties.defaultHostName
+output appHostName string = frontendServiceApp.properties.defaultHostName

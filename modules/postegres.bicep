@@ -1,6 +1,6 @@
 // param adminUsername string = 'iebankdbadmin'
-// @secure()
-// param adminPassword string 
+@secure()
+param adminPassword string = keyVault.getSecret('postgres-admin-password')
 param location string = resourceGroup().location
 param postgresSQLServerName string
 param postgresSQLDatabaseName string = 'ie-bank-db'
@@ -21,6 +21,8 @@ param storageSizeGB int = 32
 
 var skuName = environmentType == 'prod' ? 'Standard_B1ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
 var backupRetentionDays = environmentType == 'prod' ? 14 : (environmentType == 'uat' ? 7 : 3)
+var allowedIpAddresses = environmentType == 'dev' ? ['0.0.0.0'] : ['0.0.0.0']
+
 
 
 resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
@@ -32,7 +34,7 @@ resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01
     }
   properties: {
     administratorLogin: 'iebankdbadmin'
-    administratorLoginPassword: 'IE.Bank.DB.Admin.Pa$$'
+    administratorLoginPassword: adminPassword
     version: '15'
     createMode: 'Default'
     authConfig: {activeDirectoryAuth: 'Enabled', passwordAuth: 'Enabled', tenantId: subscription().tenantId }
@@ -53,13 +55,16 @@ resource postgresSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/database
     charset: 'UTF8'
     collation: 'en_US.UTF8'
   }
+  dependsOn: [
+    postgresSQLServer
+  ]
 }
 
 resource firewallRule 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-12-01' = {
   name: 'AllowAllAzureServices'
   properties: {
-    startIpAddress: '0.0.0.0'
-    endIpAddress: '0.0.0.0'
+    startIpAddress: allowedIpAddresses[0]
+    endIpAddress: allowedIpAddresses[0]
   }
 }
 
@@ -118,6 +123,8 @@ resource postgresSQLDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-0
 
 
 output postgresSQLDatabaseName string = postgresSQLDatabase.name
+// output postgresSQLServerName string = postgresSQLServer.name
 output postgresSQLServerName string = postgresSQLServer.name
+
 // output connectionString string = '${serverName}.postgres.database.azure.com'
-output resourceOutput object = postgresSQLServer
+// output resourceOutput object = postgresSQLServer

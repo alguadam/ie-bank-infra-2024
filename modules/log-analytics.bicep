@@ -1,11 +1,6 @@
-@description('The name of the Log Analytics Workspace')
 param workspaceName string
-
-@description('The location where the Log Analytics Workspace will be deployed')
-param location string
-
-@description('The SKU of the Log Analytics Workspace')
-param sku string = 'PerGB2018' // default SKU  suitable for most use cases
+param location string = resourceGroup().location
+param sku string = 'PerGB2018' 
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: workspaceName
@@ -19,4 +14,5 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06
 }
 
 output workspaceId string = logAnalyticsWorkspace.id
-output workspaceKey string = listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+// output workspaceKey string = listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name

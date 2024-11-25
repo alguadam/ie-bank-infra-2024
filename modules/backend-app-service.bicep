@@ -1,7 +1,17 @@
-param appName string
-param planId string
-param location string
-param envVars object
+param appServiceAPIAppName string
+param appServicePlanId string
+param location string = resourceGroup().location
+param containerRegistryName string
+param dockerRegistryImageName string
+param dockerRegistryImageTag string = 'latest'
+
+@secure()
+param dockerRegistryUserName string
+@secure()
+param dockerRegistryPassword string
+
+param appSettings array = []
+param appCommandLine string = ''
 
 @allowed([
   'dev'
@@ -23,24 +33,36 @@ var backendConfig = {
 }
 var alwaysOnSetting = backendConfig[environmentType].alwaysOn
 
-resource backendApp 'Microsoft.Web/sites@2021-02-01' = {
-  name: appName
+var dockerAppSettings = [
+  { name: 'DOCKER_REGISTRY_SERVER_URL', value: 'https://${containerRegistryName}.azurecr.io'}
+  { name: 'DOCKER_REGISTRY_SERVER_USERNAME', value: dockerRegistryUserName }
+  { name: 'DOCKER_REGISTRY_SERVER_PASSWORD', value: dockerRegistryPassword }
+]
+
+
+
+resource backendAPIApp 'Microsoft.Web/sites@2021-02-01' = {
+  name: appServiceAPIAppName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
-    serverFarmId: planId
+    serverFarmId: appServicePlanId
     httpsOnly: true
     siteConfig: {
-      linuxFxVersion: 'PYTHON|3.11' 
+      linuxFxVersion: 'DOCKER|${containerRegistryName}.azurecr.io/${dockerRegistryImageName}:${dockerRegistryImageTag}'
       alwaysOn: alwaysOnSetting
       ftpsState: 'FtpsOnly'
-      appSettings: [
-        for key in keys(envVars): {
-          name: key
-          value: envVars[key]
-        }
-      ]
+      appSettings: union(appSettings, dockerAppSettings)
+      appCommandLine: appCommandLine
     }
   }
 }
 
-output appHostName string = backendApp.properties.defaultHostName
+
+output systemAssignedIdentityPrincipalId string = backendAPIApp.identity.principalId
+output appServiceAppHostName string = backendAPIApp.properties.defaultHostName
+// output appHostName string = backendApp.properties.defaultHostName
+output dockerImage string = '${containerRegistryName}.azurecr.io/${dockerRegistryImageName}:${dockerRegistryImageTag}'
+
