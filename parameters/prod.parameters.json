@@ -3,70 +3,70 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentType": {
-            "value": "uat"
+            "value": "prod"
         },
         "userAlias": {
             "value": "apayne"
         },
         "postgresAdminPassword": {
-            "value": "uat-password-from-keyvault"
+            "value": "prod-password-from-keyvault"
         },
         "appServiceAPIEnvVarDBPASS": {
-            "value": "uat-db-pass-from-keyvault"
+            "value": "prod-db-pass-from-keyvault"
         },
         "postgreSQLServerName": {
-            "value": "apayne-dbsrv-uat"
+            "value": "apayne-dbsrv-prod"
         },
         "postgreSQLDatabaseName": {
-            "value": "apayne-db-uat"
+            "value": "apayne-db-prod"
         },
         "appServicePlanName": {
-            "value": "apayne-asp-uat"
+            "value": "apayne-asp-prod"
         },
         "appServiceAPIAppName": {
-            "value": "apayne-be-uat"
+            "value": "apayne-be-prod"
         },
         "appServiceAppName": {
-            "value": "apayne-fe-uat"
+            "value": "apayne-fe-prod"
         },
         "location": {
             "value": "North Europe"
         },
         "appServiceAPIEnvVarENV": {
-            "value": "uat"
+            "value": "prod"
         },
         "appServiceAPIEnvVarDBHOST": {
-            "value": "apayne-dbsrv-uat.postgres.database.azure.com"
+            "value": "apayne-dbsrv-prod.postgres.database.azure.com"
         },
         "appServiceAPIEnvVarDBNAME": {
-            "value": "apayne-db-uat"
+            "value": "apayne-db-prod"
         },
         "appServiceAPIEnvVarDBUSER": {
-            "value": "iebankdbadmin@apayne-dbsrv-uat"
+            "value": "iebankdbadmin@apayne-dbsrv-prod"
         },
         "appServiceAPIDBHostFLASK_APP": {
             "value": "app.py"
         },
         "appServiceAPIDBHostFLASK_DEBUG": {
-            "value": "1"
+            "value": "0"
         },
         "containerRegistryName": {
             "value": "apayneacruat"
         },
         "dockerRegistryImageName": {
-            "value": "apayne-be-uat"
+            "value": "apayne-be-prod"
         },
         "dockerRegistryImageTag": {
             "value": "latest"
         },
         "logAnalyticsWorkspaceName": {
-            "value": "apayne-law-uat"
+            "value": "apayne-law-prod"
         },
         "appInsightsName": {
-            "value": "apayne-appInsights-uat"
+            "value": "apayne-appInsights-prod"
         },
         "keyVaultName": {
-            "value": "apayne-kv-uat"
+            "value": "apayne-kv-prod"
         },
         "keyVaultRoleAssignments": {
             "value": [

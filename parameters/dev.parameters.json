@@ -1,27 +1,71 @@
+
+
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentType": {
-            "value": "nonprod"
+            "value": "dev"
         },
         "postgreSQLServerName": {
-            "value": "aguadamillas-dbsrv-dev"
+            "value": "apayne-dbsrv-dev"
         },
         "postgreSQLDatabaseName": {
-            "value": "aguadamillas-db-dev"
+            "value": "apayne-db-dev"
         },
         "appServicePlanName": {
-            "value": "aguadamillas-asp-dev"
+            "value": "apayne-asp-dev"
         },
         "appServiceAPIAppName": {
-            "value": "aguadamillas-be-dev"
+            "value": "apayne-be-dev"
         },
         "appServiceAppName": {
-            "value": "aguadamillas-fe-dev"
+            "value": "apayne-fe-dev"
         },
         "location": {
             "value": "North Europe"
+        },
+        "containerRegistryName": {
+            "value": "apayneacrdev"
+         },
+        "dockerRegistryImageName": {
+            "value": "apayne-be-dev"
+        },
+        "dockerRegistryImageTag": {
+            "value": "latest"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "apayne-law-dev"
+        },
+        "appInsightsName": {
+            "value": "apayne-appInsights-dev"
+        },
+        "keyVaultName": {
+            "value": "apayne-kv-dev"
+        },
+        "keyVaultRoleAssignments": {
+            "value": [
+                {
+                "principalId": "daa3436a-d1fb-44fe-b34b-053db433cdb7",
+                "roleDefinitionIdOrName": "Key Vault Administrator",
+                "principalType": "Group"
+                },
+                {
+                "principalId": "37841ca3-42b3-4aed-b215-44d6f5dcb57d",
+                "roleDefinitionIdOrName": "Key Vault Secrets User",
+                "principalType": "ServicePrincipal"
+                }
+            ]
+        },
+        "keyVaultSecretNameAdminUsername": {
+            "value": "REPLACELATER"
+        },
+        "keyVaultSecretNameAdminPassword0": {
+            "value": "REPLACELATER"
+        },
+        "keyVaultSecretNameAdminPassword1": {
+            "value": "REPLACELATER"
         }
     }
 }
+
