@@ -56,15 +56,6 @@
                     "principalType": "ServicePrincipal"
                 }
             ]
-        },
-        "keyVaultSecretNameAdminUsername": {
-          "value":  "<secret_removed>"
-        },
-        "keyVaultSecretNameAdminPassword0": {
-          "value":  "<secret_removed>"
-        },
-        "keyVaultSecretNameAdminPassword1": {
-          "value":  "<secret_removed>"
         }
     }
 }
