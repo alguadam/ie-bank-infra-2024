@@ -6,7 +6,7 @@ param location string
   'prod'
 ])
 param environmentType string 
-param enableGeoReplication bool = environmentType == 'prod' // default true for prod
+// param enableGeoReplication bool = environmentType == 'prod' // default true for prod
 
 var containerRegistrySku = environmentType == 'prod' ? 'Standard': 'Basic'
 
@@ -24,15 +24,6 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
   location: location
   sku: {
     name: containerRegistrySku 
-  }
-  properties: {
-    adminUserEnabled: true
-    geoReplication: enableGeoReplication ? {
-      regions:[
-        'East US'
-        'West US'
-      ]
-    }: null    //enabled for prod only
   }
 }
 
