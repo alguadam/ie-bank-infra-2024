@@ -92,7 +92,7 @@ var accessPolicies = environmentType =='dev' ? [
 
 
 
-resource keyVault 'Microsoft.KeyVault/vaults@2021-07-01-preview' = {
+resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
   name: keyVaultName
   location: location
   properties: {
