@@ -7,43 +7,49 @@
 param environmentType string = 'dev'
 
 param location string = resourceGroup().location
-var postgresSku = environmentType == 'prod' ? 'GP_B2ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
+// var postgresSku = environmentType == 'prod' ? 'GP_B2ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
 
 // PostgreSQL Parameters
 @secure()
-param postgresAdminPassword string = keyVault.getSecret('postgres-admin-password')
-param postgreSQLServerName string = 'ie-bank-db-server-${environmentType}'
-param postgreSQLDatabaseName string = 'ie-bank-db'
+// param postgresAdminPassword string //= keyVault.getSecret('postgres-admin-password')
+param postgreSQLServerName string 
+param postgreSQLDatabaseName string 
+param storageSizeGB int
+// param postgresSQLAdminServerPrincipalName string
+// param postgresSQLAdminServerPrincipalObjectId string
 
 // App Service Parameters
-param appServicePlanName string = 'ie-bank-app-sp-${environmentType}'
-param appServiceAppName string = 'ie-bank-${environmentType}'
-param appServiceAPIAppName string = 'ie-bank-api-${environmentType}'
-param appServiceAPIDBHostFLASK_APP string = 'app.py'
+param appServicePlanName string 
+param appServiceAppName string 
+param appServiceAPIAppName string 
+param appServiceAPIDBHostFLASK_APP string 
 @allowed(['0', '1'])
-param appServiceAPIDBHostFLASK_DEBUG string = environmentType == 'prod' ? '0' : '1'
-param appServiceAPIEnvVarENV string = environmentType
-param appServiceAPIEnvVarDBHOST string = '${postgreSQLServerName}.postgres.database.azure.com'
-param appServiceAPIEnvVarDBNAME string = postgreSQLDatabaseName
-param appServiceAPIEnvVarDBUSER string = 'iebankdbadmin@${postgreSQLServerName}'
+param appServiceAPIDBHostFLASK_DEBUG string 
+param appServiceAPIEnvVarENV string 
+param appServiceAPIEnvVarDBHOST string 
+param appServiceAPIEnvVarDBNAME string 
+param appServiceAPIEnvVarDBUSER string 
 @secure()
-param appServiceAPIEnvVarDBPASS string = postgresAdminPassword
+param appServiceAPIEnvVarDBPASS string 
 
 // Container Registry Parameters
-param containerRegistryName string = 'ie-bank-acr-${environmentType}'
+param containerRegistryName string 
 param dockerRegistryImageName string 
-param dockerRegistryImageTag string = 'latest'
+param dockerRegistryImageTag string 
+param dockerRegistryUserName string 
+param dockerRegistryPassword string 
+
 
 // Application Insights and Log Analytics Parameters
-param appInsightsName string = 'appinsights-${environmentType}'
-param logAnalyticsWorkspaceName string = 'log-${environmentType}'
+param appInsightsName string 
+param logAnalyticsWorkspaceName string 
 
 // Key Vault Parameters
-param keyVaultName string = 'apayne-kv-dev'
+param keyVaultName string 
 param keyVaultRoleAssignments array = []
-param keyVaultSecretNameAdminUsername string 
-param keyVaultSecretNameAdminPassword0 string 
-param keyVaultSecretNameAdminPassword1 string 
+// param keyVaultSecretNameAdminUsername string 
+// param keyVaultSecretNameAdminPassword0 string 
+// param keyVaultSecretNameAdminPassword1 string 
 
 
 // var logAnalyticsWorkspaceId = resourceId('Microsoft.OperationalInsights/workspaces', logAnalyticsWorkspaceName)
@@ -85,7 +91,7 @@ module keyVault 'modules/key-vault.bicep' = {
         environmentType: environmentType
         enableVaultForDeployment: true
         roleAssignments: keyVaultRoleAssignments
-        logAnalyticsWorkspaceId: logAnalytics.outputs.workspaceId
+        // logAnalyticsWorkspaceId: logAnalytics.outputs.workspaceId
     }
     dependsOn: [
     logAnalytics
@@ -93,16 +99,17 @@ module keyVault 'modules/key-vault.bicep' = {
 }
 
 
-
 module postgresSQLDatabase 'modules/postgres.bicep' = {
   name: 'postgres-${environmentType}'
   params: {
     postgresSQLServerName: postgreSQLServerName
     postgresSQLDatabaseName: postgreSQLDatabaseName
-    adminPassword: postgresAdminPassword
+    // adminPassword: postgresAdminPassword
     location: location
     environmentType: environmentType
     logsAnalyticsWorkspaceId: logAnalytics.outputs.workspaceId
+    storageSizeGB: storageSizeGB
+    appServiceAPIEnvVarDBPASS: appServiceAPIEnvVarDBPASS
   }
   dependsOn: [
     keyVault
@@ -118,15 +125,15 @@ module containerRegistry 'modules/container-registry.bicep' = {
         registryName: containerRegistryName
         location: location
         environmentType: environmentType
-        keyVaultResourceId: keyVault.outputs.keyVaultResourceId
-        keyVaultSecretNameAdminUsername: keyVaultSecretNameAdminUsername
-        keyVaultSecretNameAdminPassword0: keyVaultSecretNameAdminPassword0
-        keyVaultSecretNameAdminPassword1: keyVaultSecretNameAdminPassword1
+        // keyVaultResourceId: keyVault.outputs.keyVaultResourceId
+        // keyVaultSecretNameAdminUsername: keyVaultSecretNameAdminUsername
+        // keyVaultSecretNameAdminPassword0: keyVaultSecretNameAdminPassword0
+        // keyVaultSecretNameAdminPassword1: keyVaultSecretNameAdminPassword1
         logAnalyticsWorkspaceId: logAnalytics.outputs.workspaceId
     }
     dependsOn: [
-    keyVault
-    logAnalytics
+      keyVault
+      logAnalytics
   ]
 }
 
@@ -151,6 +158,7 @@ module frontend 'modules/frontend-app-service.bicep' = {
     appServiceAppName: appServiceAppName
     appServicePlanId: appServicePlan.outputs.planId
     location: location
+    environmentType: environmentType
     appInsightsConnectionString: appInsights.outputs.appInsightsConnectionString
     appInsightsInstrumentationKey: appInsights.outputs.appInsightsInstrumentationKey
   }
@@ -172,8 +180,8 @@ module backend 'modules/backend-app-service.bicep' = {
     containerRegistryName: containerRegistryName
     dockerRegistryImageName: dockerRegistryImageName
     dockerRegistryImageTag: dockerRegistryImageTag
-    dockerRegistryUserName: keyVault.getSecret(keyVaultSecretNameAdminUsername)
-    dockerRegistryPassword: keyVault.getSecret(keyVaultSecretNameAdminPassword0)
+    dockerRegistryUserName: dockerRegistryUserName 
+    dockerRegistryPassword: dockerRegistryPassword
 
     appSettings: [{
       ENV: appServiceAPIEnvVarENV
@@ -199,14 +207,14 @@ module backend 'modules/backend-app-service.bicep' = {
 
 
 output frontendHostName string = frontend.outputs.appHostName
-output backendHostName string = backend.outputs.appHostName
+output backendHostName string = backend.outputs.appServiceAppHostName
 output containerRegistryLoginServer string = containerRegistry.outputs.registryLoginServer
 output appInsightsInstrumentationKey string = appInsights.outputs.appInsightsInstrumentationKey
 output appInsightsConnectionString string = appInsights.outputs.appInsightsConnectionString 
 output logAnalyticsWorkspaceId string = logAnalytics.outputs.workspaceId
 output logAnalyticsWorkspaceName string = logAnalytics.outputs.logAnalyticsWorkspaceName
 output keyVaultUri string = keyVault.outputs.keyVaultUri
-output postgresConnectionString string = '${postgreSQLServerName}.postgres.database.azure.com'
+// output postgresConnectionString string = '${postgreSQLServerName}.postgres.database.azure.com'
 
 
 

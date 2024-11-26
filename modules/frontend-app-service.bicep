@@ -37,11 +37,16 @@ resource frontendServiceApp 'Microsoft.Web/sites@2021-03-01' = {
       alwaysOn: alwaysOnSetting   
       ftpsState: 'FtpsOnly'
       appCommandLine: 'pm2 serve /home/site/wwroot --spa --no-daemon'
-    } 
-    appSettings: {
-      APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
-      APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
-    }
+      appSettings: [{
+        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+        value: appInsightsInstrumentationKey
+        }
+        {
+        name:'APPLICATIONINSIGHTS_CONNECTION_STRING'
+        value: appInsightsConnectionString
+        }
+      ]
+    }  
   }
 }
 

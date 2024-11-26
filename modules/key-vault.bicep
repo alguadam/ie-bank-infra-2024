@@ -1,9 +1,15 @@
 param location string = resourceGroup().location 
-param keyVaultName string = 'kv-${environmentType}-${uniqueString(resourceGroup().id)}'
+param keyVaultName string 
+// param keyVaultSecretNameAdminUsername string
+// param keyVaultSecretNameAdminPassword0 string
 param enableVaultForDeployment bool = true
-param logAnalyticsWorkspaceId string 
-param diagnosticSettingName string = 'myDiagnosticSetting'
+// param logAnalyticsWorkspaceId string 
+// param diagnosticSettingName string = 'myDiagnosticSetting'
 param roleAssignments array = []
+// @secure()
+// param dockerRegistryUsername string
+// @secure()
+// param dockerRegistryPassword string
 
 @allowed([
   'dev'
@@ -52,7 +58,7 @@ var networkRules = environmentType == 'dev' ? {
 var accessPolicies = environmentType =='dev' ? [
   {
     tenantId: subscription().tenantId
-    objectId: 'developer-object-id'     //developer access
+    objectId: 'daa3436a-d1fb-44fe-b34b-053db433cdb7'     //developer access
     permissions: {
       secrets: ['get', 'list', 'set']
       certificates: ['get', 'list']
@@ -61,15 +67,15 @@ var accessPolicies = environmentType =='dev' ? [
 ] : environmentType =='uat' ? [
   {
     tenantId: subscription().tenantId
-    objectId: 'developer-object-id'     //developer access
+    objectId: 'daa3436a-d1fb-44fe-b34b-053db433cdb7'     //developer access
     permissions: {
       secrets: ['get', 'list', 'set']
       certificates: ['get', 'list']
       }
-    }, 
+    }
     {
       tenantId: subscription().tenantId
-      objectId: 'stakeholder-object-id'     //stakeholder access 
+      objectId: 'daa3436a-d1fb-44fe-b34b-053db433cdb7'     //stakeholder access --> NEED TO CHANGE
       permissions: {
         secrets: ['get', 'list']
         certificates: ['get', 'list']
@@ -78,8 +84,8 @@ var accessPolicies = environmentType =='dev' ? [
 ]: [
   {
       tenantId: subscription().tenantId
-      objectId: 'admin-object-id'
-      permissions: {
+      objectId: 'daa3436a-d1fb-44fe-b34b-053db433cdb7'           //ADMIN access --> NEED TO CHANGE
+      permissions: { 
         secrets: ['get', 'list', 'set', 'delete']
         certificates: ['get', 'list', 'set', 'delete']
         keys: ['get', 'list', 'set', 'delete']
@@ -109,44 +115,64 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
 
 
 
-resource keyVault_roleAssignments 'Microsoft.Authorizations/roleAssignments@2022-04-01' = [
-  for (roleAssignment, index) in (roleAssignments ?? []): {
-    name: guid(keyVault.id, roleAssignment.principalId, roleAssignment.roleDefinitionIdOrName)
-    properties: {
-      roleDefinitionId: builtInRoleNames[?roleAssignment.roleDefinitionIdOrName] ?? roleAssignment.roleDefinitionIdOrName
-      principalId: roleAssignment.principalId
-      description: roleAssignment.?description
-      principalType: roleAssignment.?principalType 
-      condition: roleAssignment.?condition
-      conditionVersion: !empty(roleAssignment.?condition) ? (roleAssignment.?conditionVersion ?? '2.0'): null
-      delegatedManagedIdentityResourceId: roleAssignment.?delegatedManagedIdentityResourceId
-    }
-    scope: keyVault
-  }
-]
+// resource keyVault_roleAssignments 'Microsoft.Authorizations/roleAssignments@2022-04-01' = [
+//   for (roleAssignment, index) in (roleAssignments ?? []): {
+//     name: guid(keyVault.id, roleAssignment.principalId, roleAssignment.roleDefinitionIdOrName)
+//     properties: {
+//       roleDefinitionId: builtInRoleNames[?roleAssignment.roleDefinitionIdOrName] ?? roleAssignment.roleDefinitionIdOrName
+//       principalId: roleAssignment.principalId
+//       description: roleAssignment.?description
+//       principalType: roleAssignment.?principalType 
+//       condition: roleAssignment.?condition
+//       conditionVersion: !empty(roleAssignment.?condition) ? (roleAssignment.?conditionVersion ?? '2.0'): null
+//       delegatedManagedIdentityResourceId: roleAssignment.?delegatedManagedIdentityResourceId
+//     }
+//     scope: keyVault
+//   }
+// ]
 
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: diagnosticSettingName
-  scope: keyVault
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'AuditEvent'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
+// resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+//   name: diagnosticSettingName
+//   scope: keyVault
+//   properties: {
+//     workspaceId: logAnalyticsWorkspaceId
+//     logs: [
+//       {
+//         category: 'AuditEvent'
+//         enabled: true
+//       }
+//     ]
+//     metrics: [
+//       {
+//         category: 'AllMetrics'
+//         enabled: true
+//       }
+//     ]
+//   }
+// }
+
+
+// resource dockerRegistryUsernameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01' = {
+//   name: 'dockerRegistryUsername'
+//   parent: keyVault
+//   properties: {
+//     value: dockerRegistryUsername
+//   }
+// }
+
+// resource dockerRegistryPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01' = {
+//   name: 'dockerRegistryPassword'
+//   parent: keyVault
+//   properties: {
+//     value: dockerRegistryPassword
+//   }
+// }
 
 
 // output keyVaultUri string = keyVault.properties.vaultUri
 output keyVaultResourceId string = keyVault.id
 output keyVaultName string = keyVault.name
 output keyVaultUri string = keyVault.properties.vaultUri
+// output dockerRegistryUsernameSecret string = reference(resourceId('Microsoft.KeyVault/vaults/secrets', keyVaultName, keyVaultSecretNameAdminUsername)).value
+// output dockerRegistryPasswordSecret string = reference(resourceId('Microsoft.KeyVault/vaults/secrets', keyVaultName, keyVaultSecretNameAdminPassword0)).value
+

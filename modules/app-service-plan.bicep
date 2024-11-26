@@ -25,7 +25,7 @@ var environmentConfig = {
 var skuName = environmentConfig[environmentType].sku
 var capacity = environmentConfig[environmentType].capacity
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: appServicePlanName
   location: location
   sku: {

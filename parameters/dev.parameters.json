@@ -5,20 +5,14 @@
         "environmentType": {
             "value": "dev"
         },
-         "userAlias": {
-            "value": "apayne"
-        },
-         "postgresAdminPassword": {
-            "value": "dev-password-from-keyvault"
-        },
         "postgreSQLServerName": {
             "value": "apayne-dbsrv-dev"
         },
         "postgreSQLDatabaseName": {
             "value": "apayne-db-dev"
         },
-         "appServiceAPIEnvVarDBPASS": {
-            "value": "dev-db-pass-from-keyvault"
+        "storageSizeGB": {
+            "value": 32
         },
         "appServicePlanName": {
             "value": "apayne-asp-dev"
@@ -44,12 +38,47 @@
         "appServiceAPIEnvVarDBUSER": {
             "value": "iebankdbadmin@apayne-dbsrv-dev"
         },
+        "appServiceAPIEnvVarDBPASS": {
+            "value": "My$tr0ngP@ssw0rd!2024"
+        },
         "appServiceAPIDBHostFLASK_APP": {
             "value": "app.py"
         },
         "appServiceAPIDBHostFLASK_DEBUG": {
             "value": "1"
+        },
+        "containerRegistryName": {
+            "value": "apayneacrdev"
+         },
+        "dockerRegistryImageName": {
+            "value": "apayne-be-dev"
+        },
+        "dockerRegistryImageTag": {
+            "value": "latest"
+        },
+        "dockerRegistryUserName": {
+            "value": "apayneacrdev"
+        },
+        "dockerRegistryPassword": {
+            "value": "wLHl089Z0H6NN3gzzIp4RLIBn3K3ym03PVwRmBEZyN+ACRBVRRPR"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "apayne-law-dev"
+        },
+        "appInsightsName": {
+            "value": "apayne-appInsights-dev"
+        },
+        "keyVaultName": {
+            "value": "apayne-kv-dev"
+        },
+        "keyVaultRoleAssignments": {
+            "value": [
+                {
+                "principalId": "daa3436a-d1fb-44fe-b34b-053db433cdb7",
+                "roleDefinitionIdOrName": "Key Vault Administrator",
+                "principalType": "Group"
+                }
+            ]
         }
-
     }
 }

@@ -1,12 +1,13 @@
 // param adminUsername string = 'iebankdbadmin'
-@secure()
-param adminPassword string = keyVault.getSecret('postgres-admin-password')
+// @secure()
+// param adminPassword string 
 param location string = resourceGroup().location
 param postgresSQLServerName string
-param postgresSQLDatabaseName string = 'ie-bank-db'
-param postgresSQLAdminServerPrincipalName string
-param postgresSQLAdminServerPrincipalObjectId string
+param postgresSQLDatabaseName string 
+// param postgresSQLAdminServerPrincipalName string
+// param postgresSQLAdminServerPrincipalObjectId string
 param logsAnalyticsWorkspaceId string 
+param appServiceAPIEnvVarDBPASS string
 
 @allowed([
   'dev'
@@ -17,9 +18,9 @@ param environmentType string
 
 @minValue(32)
 @maxValue(1024)
-param storageSizeGB int = 32
+param storageSizeGB int
 
-var skuName = environmentType == 'prod' ? 'Standard_B1ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
+// var skuName = environmentType == 'prod' ? 'Standard_B1ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
 var backupRetentionDays = environmentType == 'prod' ? 14 : (environmentType == 'uat' ? 7 : 3)
 var allowedIpAddresses = environmentType == 'dev' ? ['0.0.0.0'] : ['0.0.0.0']
 
@@ -29,12 +30,12 @@ resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01
   name: postgresSQLServerName
   location: location
   sku: {
-    name: skuName
+    name: 'Standard_B1ms' 
     tier: 'Burstable'
     }
   properties: {
     administratorLogin: 'iebankdbadmin'
-    administratorLoginPassword: adminPassword
+    administratorLoginPassword: appServiceAPIEnvVarDBPASS  
     version: '15'
     createMode: 'Default'
     authConfig: {activeDirectoryAuth: 'Enabled', passwordAuth: 'Enabled', tenantId: subscription().tenantId }
@@ -46,6 +47,13 @@ resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01
       geoRedundantBackup: environmentType == 'prod' ? 'Enabled' : 'Disabled'
     }
   }
+  resource firewallRule 'firewallRules@2022-12-01' = {
+  name: 'AllowAllAzureServices'
+  properties: {
+    startIpAddress: allowedIpAddresses[0]
+    endIpAddress: allowedIpAddresses[0]
+  }
+}
 }
 
 resource postgresSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-12-01' = {
@@ -55,30 +63,21 @@ resource postgresSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/database
     charset: 'UTF8'
     collation: 'en_US.UTF8'
   }
-  dependsOn: [
-    postgresSQLServer
-  ]
 }
 
-resource firewallRule 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-12-01' = {
-  name: 'AllowAllAzureServices'
-  properties: {
-    startIpAddress: allowedIpAddresses[0]
-    endIpAddress: allowedIpAddresses[0]
-  }
-}
 
-resource postgresSQLAdmins 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {
-  name: postgresSQLAdminServerPrincipalObjectId
-  properties: {
-    principalName: postgresSQLAdminServerPrincipalName
-    principalType: 'ServicePrincipal'
-    tenantId: subscription().tenantId
-  }
-  dependsOn: [
-    firewallRule
-  ]
-}
+
+// resource postgresSQLAdmins 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {
+//   name: postgresSQLAdminServerPrincipalObjectId
+//   properties: {
+//     principalName: postgresSQLAdminServerPrincipalName
+//     principalType: 'ServicePrincipal'
+//     tenantId: subscription().tenantId
+//   }
+//   dependsOn: [
+//     firewallRule
+//   ]
+// }
 
 
 resource postgresSQLDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
@@ -123,8 +122,4 @@ resource postgresSQLDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-0
 
 
 output postgresSQLDatabaseName string = postgresSQLDatabase.name
-// output postgresSQLServerName string = postgresSQLServer.name
 output postgresSQLServerName string = postgresSQLServer.name
-
-// output connectionString string = '${serverName}.postgres.database.azure.com'
-// output resourceOutput object = postgresSQLServer

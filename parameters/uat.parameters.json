@@ -49,6 +49,48 @@
         },
         "appServiceAPIDBHostFLASK_DEBUG": {
             "value": "1"
+        },
+        "containerRegistryName": {
+            "value": "apayneacruat"
+        },
+        "dockerRegistryImageName": {
+            "value": "apayne-be-uat"
+        },
+        "dockerRegistryImageTag": {
+            "value": "latest"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "apayne-law-uat"
+        },
+        "appInsightsName": {
+            "value": "apayne-appInsights-uat"
+        },
+        "keyVaultName": {
+            "value": "apayne-kv-uat"
+        },
+        "keyVaultRoleAssignments": {
+            "value": [
+                {
+                "principalId": "daa3436a-d1fb-44fe-b34b-053db433cdb7",
+                "roleDefinitionIdOrName": "Key Vault Administrator",
+                "principalType": "Group"
+                }
+            ]
+        },
+        "keyVaultSecretNameAdminUsername": {
+            "value": "acr-username"
+        },
+        "keyVaultSecretNameAdminPassword0": {
+            "value": "acr-password0"
+        },
+        "keyVaultSecretNameAdminPassword1": {
+            "value": "acr-password1"
+        }, 
+        "postgresSQLAdminServerPrincipalName": {
+            "value": "principal-name"
+        },
+        "postgresSQLAdminServerPrincipalObjectId": {
+            "value": "principal-object-id"
         }
     }
 }
