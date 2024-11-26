@@ -56,6 +56,15 @@
                 "principalType": "ServicePrincipal"
                 }
             ]
+        },
+        "keyVaultSecretNameAdminUsername": {
+            "value": "REPLACELATER"
+        },
+        "keyVaultSecretNameAdminPassword0": {
+            "value": "REPLACELATER"
+        },
+        "keyVaultSecretNameAdminPassword1": {
+            "value": "REPLACELATER"
         }
     }
 }
