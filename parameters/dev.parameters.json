@@ -59,9 +59,6 @@
         "dockerRegistryUserName": {
             "value": "apayneacrdev"
         },
-        "dockerRegistryPassword": {
-            "value": "wLHl089Z0H6NN3gzzIp4RLIBn3K3ym03PVwRmBEZyN+ACRBVRRPR"
-        },
         "logAnalyticsWorkspaceName": {
             "value": "apayne-law-dev"
         },
