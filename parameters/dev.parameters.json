@@ -51,9 +51,9 @@
                 "principalType": "Group"
                 },
                 {
-                    "principalId": "37841ca3-42b3-4aed-b215-44d6f5dcb57d",
-                    "roleDefinitionIdOrName": "Key Vault Secrets User",
-                    "principalType": "ServicePrincipal"
+                "principalId": "37841ca3-42b3-4aed-b215-44d6f5dcb57d",
+                "roleDefinitionIdOrName": "Key Vault Secrets User",
+                "principalType": "ServicePrincipal"
                 }
             ]
         }
