@@ -9,28 +9,31 @@
             "value": "westeurope"
         },
         "postgreSQLServerName": {
-            "value": "devious-dbsrv-dev"
+            "value": "devious-dbsrv-uat"
         },
         "postgreSQLDatabaseName": {
-            "value": "devious-db-dev"
+            "value": "devious-db-uat"
         },
         "appServicePlanName": {
-            "value": "devious-asp-dev"
+            "value": "devious-asp-uat"
         },
         "appServiceAppName": {
-            "value": "devious-fe-dev"
+            "value": "devious-fe-uat"
         },
         "appServiceAPIAppName": {
-            "value": "devious-be-dev"
+            "value": "devious-be-uat"
         },
         "appServiceAPIEnvVarENV": {
-            "value": "development"
+            "value": "uat"
         },
         "appServiceAPIEnvVarDBHOST": {
-            "value": "devious-dbsrv-dev.postgres.database.azure.com"
+            "value": "devious-dbsrv-uat.postgres.database.azure.com"
         },
         "appServiceAPIEnvVarDBNAME": {
-            "value": "devious-db-dev"
+            "value": "devious-db-uat"
+        },
+        "appServiceAPIEnvVarDBPASS": {
+            "value": "<secure-password>"
         },
         "appServiceAPIDBHostDBUSER": {
             "value": "iebankdbadmin"
@@ -42,25 +45,28 @@
             "value": "1"
         },
         "vnetName": {
-            "value": "devious-vnet-dev"
+            "value": "devious-vnet-uat"
         },
         "keyVaultName": {
-            "value": "devious-kv-dev"
+            "value": "devious-kv-uat"
+        },
+        "tenantId": {
+            "value": "<your-tenant-id>"
         },
         "storageAccountName": {
-            "value": "deviousstordev"
+            "value": "deviousstoruat"
         },
         "containerRegistryName": {
-            "value": "deviousacrdev"
+            "value": "deviousacruat"
         },
         "applicationInsightsName": {
-            "value": "devious-ai-dev"
+            "value": "devious-ai-uat"
         },
         "logAnalyticsWorkspaceName": {
-            "value": "devious-law-dev"
+            "value": "devious-law-uat"
         },
         "staticWebAppName": {
-            "value": "devious-swa-dev"
+            "value": "devious-swa-uat"
         }
     }
 }
