@@ -58,13 +58,13 @@
             ]
         },
         "keyVaultSecretNameAdminUsername": {
-          "value": "acr-username"
+          "value":  "<secret_removed>"
         },
         "keyVaultSecretNameAdminPassword0": {
-          "value": "acr-password0"
+          "value":  "<secret_removed>"
         },
         "keyVaultSecretNameAdminPassword1": {
-          "value": "acr-password1"
+          "value":  "<secret_removed>"
         }
     }
 }
