@@ -16,6 +16,11 @@ env:
   RESOURCE_GROUP_UAT: BCSAI2024-DEVOPS-STUDENTS-B-UAT
   SUBSCRIPTION_ID_DEV: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
   USER_ALIAS: apayne
+  ENV: "dev"
+  DBHOST: "apayne-dbsrv-dev.postgres.database.azure.com"
+  DBNAME: "apayne-db-dev"
+  FLASK_APP: "app.py"
+  FLASK_DEBUG: "true"
 
 jobs:
   build:

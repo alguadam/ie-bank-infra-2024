@@ -7,10 +7,10 @@
         "environmentType": {
             "value": "dev"
         },
-        "postgreSQLServerName": {
+        "postgresSQLServerName": {
             "value": "apayne-dbsrv-dev"
         },
-        "postgreSQLDatabaseName": {
+        "postgresSQLDatabaseName": {
             "value": "apayne-db-dev"
         },
         "appServicePlanName": {
