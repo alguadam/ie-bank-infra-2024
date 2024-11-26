@@ -1,3 +1,5 @@
+
+
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
@@ -11,9 +13,6 @@
         "postgreSQLDatabaseName": {
             "value": "apayne-db-dev"
         },
-        "storageSizeGB": {
-            "value": 32
-        },
         "appServicePlanName": {
             "value": "apayne-asp-dev"
         },
@@ -26,27 +25,6 @@
         "location": {
             "value": "North Europe"
         },
-        "appServiceAPIEnvVarENV": {
-            "value": "dev"
-        },
-        "appServiceAPIEnvVarDBHOST": {
-            "value": "apayne-dbsrv-dev.postgres.database.azure.com"
-        },
-        "appServiceAPIEnvVarDBNAME": {
-            "value": "apayne-db-dev"
-        },
-        "appServiceAPIEnvVarDBUSER": {
-            "value": "iebankdbadmin@apayne-dbsrv-dev"
-        },
-        "appServiceAPIEnvVarDBPASS": {
-            "value": "My$tr0ngP@ssw0rd!2024"
-        },
-        "appServiceAPIDBHostFLASK_APP": {
-            "value": "app.py"
-        },
-        "appServiceAPIDBHostFLASK_DEBUG": {
-            "value": "1"
-        },
         "containerRegistryName": {
             "value": "apayneacrdev"
          },
@@ -55,9 +33,6 @@
         },
         "dockerRegistryImageTag": {
             "value": "latest"
-        },
-        "dockerRegistryUserName": {
-            "value": "apayneacrdev"
         },
         "logAnalyticsWorkspaceName": {
             "value": "apayne-law-dev"
@@ -74,8 +49,23 @@
                 "principalId": "daa3436a-d1fb-44fe-b34b-053db433cdb7",
                 "roleDefinitionIdOrName": "Key Vault Administrator",
                 "principalType": "Group"
+                },
+                {
+                    "principalId": "37841ca3-42b3-4aed-b215-44d6f5dcb57d",
+                    "roleDefinitionIdOrName": "Key Vault Secrets User",
+                    "principalType": "ServicePrincipal"
                 }
             ]
+        },
+        "keyVaultSecretNameAdminUsername": {
+          "value": "acr-username"
+        },
+        "keyVaultSecretNameAdminPassword0": {
+          "value": "acr-password0"
+        },
+        "keyVaultSecretNameAdminPassword1": {
+          "value": "acr-password1"
         }
     }
 }
+

@@ -1,5 +1,5 @@
 param appServicePlanName string
-param location string
+param location string = resourceGroup().location
 @allowed([
   'dev'
   'uat'
@@ -9,19 +9,18 @@ param environmentType string
 
 var environmentConfig = {
   dev: {
-    sku: 'B1'
+    sku: 'F1'
     capacity: 1
   }
   uat: {
-    sku: 'S1'
-    capacity: 2
+    sku: 'F1'
+    capacity: 1
   }
   prod: {
-    sku: 'P1v2'
-    capacity: 3
+    sku: 'B1'
+    capacity: 2
   }
 }
-
 var skuName = environmentConfig[environmentType].sku
 var capacity = environmentConfig[environmentType].capacity
 

@@ -50,4 +50,4 @@ resource frontendServiceApp 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
-output appHostName string = frontendServiceApp.properties.defaultHostName
+output serviceAppHostName string = frontendServiceApp.properties.defaultHostName

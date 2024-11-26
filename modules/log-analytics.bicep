@@ -1,13 +1,12 @@
 param workspaceName string
 param location string = resourceGroup().location
-param sku string = 'PerGB2018' 
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: workspaceName
   location: location
   properties: {
     sku: {
-      name: sku
+      name: 'PerGB2018' 
     }
     retentionInDays: 30 
   }

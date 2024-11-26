@@ -63,6 +63,5 @@ resource backendAPIApp 'Microsoft.Web/sites@2021-02-01' = {
 
 output systemAssignedIdentityPrincipalId string = backendAPIApp.identity.principalId
 output appServiceAppHostName string = backendAPIApp.properties.defaultHostName
-// output appHostName string = backendApp.properties.defaultHostName
-output dockerImage string = '${containerRegistryName}.azurecr.io/${dockerRegistryImageName}:${dockerRegistryImageTag}'
+// output dockerImage string = '${containerRegistryName}.azurecr.io/${dockerRegistryImageName}:${dockerRegistryImageTag}'
 

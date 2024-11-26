@@ -1,15 +1,12 @@
 param location string = resourceGroup().location 
-param keyVaultName string 
+param keyVaultName string ='anna-kv${uniqueString(resourceGroup().id)}'
 // param keyVaultSecretNameAdminUsername string
 // param keyVaultSecretNameAdminPassword0 string
 param enableVaultForDeployment bool = true
-// param logAnalyticsWorkspaceId string 
-// param diagnosticSettingName string = 'myDiagnosticSetting'
+param logAnalyticsWorkspaceId string 
+param diagnosticSettingName string = 'myDiagnosticSetting'
 param roleAssignments array = []
-// @secure()
-// param dockerRegistryUsername string
-// @secure()
-// param dockerRegistryPassword string
+
 
 @allowed([
   'dev'
@@ -38,21 +35,21 @@ var builtInRoleNames = {
 }
 
 
-var networkRules = environmentType == 'dev' ? {
-  defaultAction: 'Allow'
-} : environmentType == 'uat' ? {
-    defaultAction: 'Deny'
-    ipRules: [
-      '0.0.0.0'       //figure this out????
-    ]
-} : {
-  defaultAction: 'Deny'
-    virtualNetworkRules: [
-      {
-        id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}'
-      }
-    ]
-}
+// var networkRules = environmentType == 'dev' ? {
+//   defaultAction: 'Allow'
+// } : environmentType == 'uat' ? {
+//     defaultAction: 'Deny'
+//     ipRules: [
+//       '0.0.0.0'       //figure this out????
+//     ]
+// } : {
+//   defaultAction: 'Deny'
+//     virtualNetworkRules: [
+//       {
+//         id: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}'
+//       }
+//     ]
+// }
 
 
 var accessPolicies = environmentType =='dev' ? [
@@ -95,7 +92,7 @@ var accessPolicies = environmentType =='dev' ? [
 
 
 
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
+resource keyVault 'Microsoft.KeyVault/vaults@2021-07-01-preview' = {
   name: keyVaultName
   location: location
   properties: {
@@ -109,47 +106,50 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     }
     tenantId: subscription().tenantId
     accessPolicies: accessPolicies
-    networkAcls: networkRules
+    // networkAcls: networkRules
   }
 }
 
 
 
-// resource keyVault_roleAssignments 'Microsoft.Authorizations/roleAssignments@2022-04-01' = [
-//   for (roleAssignment, index) in (roleAssignments ?? []): {
-//     name: guid(keyVault.id, roleAssignment.principalId, roleAssignment.roleDefinitionIdOrName)
-//     properties: {
-//       roleDefinitionId: builtInRoleNames[?roleAssignment.roleDefinitionIdOrName] ?? roleAssignment.roleDefinitionIdOrName
-//       principalId: roleAssignment.principalId
-//       description: roleAssignment.?description
-//       principalType: roleAssignment.?principalType 
-//       condition: roleAssignment.?condition
-//       conditionVersion: !empty(roleAssignment.?condition) ? (roleAssignment.?conditionVersion ?? '2.0'): null
-//       delegatedManagedIdentityResourceId: roleAssignment.?delegatedManagedIdentityResourceId
-//     }
-//     scope: keyVault
-//   }
-// ]
+resource keyVault_roleAssignments 'Microsoft.Authorizations/roleAssignments@2022-04-01' = [
+  for (roleAssignment, index) in (roleAssignments ?? []): {
+    name: guid(keyVault.id, roleAssignment.principalId, roleAssignment.roleDefinitionIdOrName)
+    properties: {
+      roleDefinitionId: builtInRoleNames[?roleAssignment.roleDefinitionIdOrName] ?? roleAssignment.roleDefinitionIdOrName
+      principalId: roleAssignment.principalId
+      description: roleAssignment.?description
+      condition: roleAssignment.?condition
+      principalType: roleAssignment.?principalType 
+      conditionVersion: !empty(roleAssignment.?condition) ? (roleAssignment.?conditionVersion ?? '2.0'): null
+      delegatedManagedIdentityResourceId: roleAssignment.?delegatedManagedIdentityResourceId
+    }
+    scope: keyVault
+  }
+]
 
-// resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-//   name: diagnosticSettingName
-//   scope: keyVault
-//   properties: {
-//     workspaceId: logAnalyticsWorkspaceId
-//     logs: [
-//       {
-//         category: 'AuditEvent'
-//         enabled: true
-//       }
-//     ]
-//     metrics: [
-//       {
-//         category: 'AllMetrics'
-//         enabled: true
-//       }
-//     ]
-//   }
-// }
+
+
+
+resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  name: diagnosticSettingName
+  scope: keyVault
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logs: [
+      {
+        category: 'AuditEvent'
+        enabled: true
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+  }
+}
 
 
 // resource dockerRegistryUsernameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01' = {
