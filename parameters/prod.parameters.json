@@ -1,47 +1,51 @@
-
-
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environmentType": {
-            "value": "dev"
+            "value": "prod"
         },
-        "postgresSQLServerName": {
-            "value": "apayne-dbsrv-dev"
+        "postgresAdminPassword": {
+            "value": "prod-password-from-keyvault"
         },
-        "postgresSQLDatabaseName": {
-            "value": "apayne-db-dev"
+        "appServiceAPIEnvVarDBPASS": {
+            "value": "prod-db-pass-from-keyvault"
+        },
+        "postgreSQLServerName": {
+            "value": "apayne-dbsrv-prod"
+        },
+        "postgreSQLDatabaseName": {
+            "value": "apayne-db-prod"
         },
         "appServicePlanName": {
-            "value": "apayne-asp-dev"
+            "value": "apayne-asp-prod"
         },
         "appServiceAPIAppName": {
-            "value": "apayne-be-dev"
+            "value": "apayne-be-prod"
         },
         "appServiceAppName": {
-            "value": "apayne-fe-dev"
+            "value": "apayne-fe-prod"
         },
         "location": {
             "value": "North Europe"
         },
         "containerRegistryName": {
-            "value": "apayneacrdev"
-         },
+            "value": "apayneacruat"
+        },
         "dockerRegistryImageName": {
-            "value": "apayne-be-dev"
+            "value": "apayne-be-prod"
         },
         "dockerRegistryImageTag": {
             "value": "latest"
         },
         "logAnalyticsWorkspaceName": {
-            "value": "apayne-law-dev"
+            "value": "apayne-law-prod"
         },
         "appInsightsName": {
-            "value": "apayne-appInsights-dev"
+            "value": "apayne-appInsights-prod"
         },
         "keyVaultName": {
-            "value": "apayne-kv-dev"
+            "value": "apayne-kv-prod"
         },
         "keyVaultRoleAssignments": {
             "value": [
@@ -49,11 +53,6 @@
                 "principalId": "daa3436a-d1fb-44fe-b34b-053db433cdb7",
                 "roleDefinitionIdOrName": "Key Vault Administrator",
                 "principalType": "Group"
-                },
-                {
-                "principalId": "37841ca3-42b3-4aed-b215-44d6f5dcb57d",
-                "roleDefinitionIdOrName": "Key Vault Secrets User",
-                "principalType": "ServicePrincipal"
                 }
             ]
         },
@@ -61,11 +60,11 @@
             "value": "acr-username"
         },
         "keyVaultSecretNameAdminPassword0": {
-            "value": "acr-username"
+            "value": "acr-password0"
         },
         "keyVaultSecretNameAdminPassword1": {
-            "value": "acr-username"
+            "value": "acr-password1"
         }
+        
     }
 }
-
