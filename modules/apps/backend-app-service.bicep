@@ -3,7 +3,7 @@ param appServicePlanId string
 param location string = resourceGroup().location
 param containerRegistryName string
 param dockerRegistryImageName string
-param dockerRegistryImageTag string 
+param dockerRegistryImageTag string = 'latest'
 
 @secure()
 param dockerRegistryUserName string

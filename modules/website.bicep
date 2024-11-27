@@ -34,7 +34,7 @@ param location string = resourceGroup().location
 ])
 param environmentType string
 
-// var appServicePlanSkuName = (environmentType == 'prod') ? 'B1' : 'F1'
+var appServicePlanSkuName = (environmentType == 'prod') ? 'B1' : 'B1'
 
 
 
@@ -44,8 +44,8 @@ module appServicePlan './apps/app-service-plan.bicep' = {
   params: {
     location: location
     appServicePlanName: appServicePlanName
-    environmentType: environmentType
-    // skuName: appServicePlanSkuName
+    // environmentType: environmentType
+    skuName: appServicePlanSkuName
   }
 }
 
@@ -61,7 +61,7 @@ module containerRegistry './container-registry.bicep' = {
   name: 'containerRegistry'
   params: {
     location: location
-    environmentType: environmentType
+    // environmentType: environmentType
     registryName: containerRegistryName
     keyVaultResourceId: keyVaultResourceId
     keyVaultSecretNameAdminUsername: keyVaultSecretNameAdminUsername
@@ -71,7 +71,14 @@ module containerRegistry './container-registry.bicep' = {
   }
 }
 
-
+module applicationInsights './application-insights.bicep' = {
+  name: 'applicationInsights'
+  params: {
+    location: location
+    appInsightsName: appServiceAppName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceId 
+  }
+}
 
 
 module backend './apps/backend-app-service.bicep' = {
@@ -122,20 +129,20 @@ module backend './apps/backend-app-service.bicep' = {
         value: 'true'
       }
       {
-        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-        value: appInsightsInstrumentationKey
-      }
-      {
-        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-        value: appInsightsConnectionString
+      //   name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+      //   value: appInsightsInstrumentationKey
+      // }
+      // {
+      //   name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+      //   value: appInsightsConnectionString
       }
     ]
   }
-  // dependencies are implicit
   dependsOn: [
     appServicePlan
     keyVaultReference
     containerRegistry
+    applicationInsights
   ]
 }
 
@@ -145,11 +152,11 @@ module frontendApp './apps/frontend-app-service.bicep' = {
   name: 'frontendAppService'
   params: {
     appServiceAppName: appServiceAppName
-    location: location
     appServicePlanId: appServicePlan.outputs.planId
     appInsightsInstrumentationKey: appInsightsInstrumentationKey
     appInsightsConnectionString: appInsightsConnectionString
     environmentType: environmentType
+    location: location
   }
 }
 
@@ -166,4 +173,9 @@ module appDatabase './database.bicep' = {
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
   }
 }
+
+
+
+
+output appServiceAppHostName string = frontendApp.outputs.serviceAppHostName
 

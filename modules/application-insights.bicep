@@ -1,18 +1,17 @@
 param appInsightsName string
 param location string
 param logAnalyticsWorkspaceId string
-@allowed([
-  'web'
-  'other'
-])
-param applicationType string = 'web'
+// @allowed([
+//   'web'
+//   'other'
+// ])
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: appInsightsName
   location: location
-  kind: applicationType
+  kind: 'web'
   properties: {
-    Application_Type: applicationType
+    Application_Type: 'web'
     WorkspaceResourceId: logAnalyticsWorkspaceId
   }
 }
