@@ -17,12 +17,49 @@ env:
   RESOURCE_GROUP_PROD: BCSAI2024-DEVOPS-STUDENTS-B-PROD
   SUBSCRIPTION_ID_DEV: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
   USER_ALIAS: apayne
+  KEY_VAULT_SECRET_NAME_ACR_USERNAME: 
+  KEY_VAULT_SECRET_NAME_ACR_PASSWORD:
+  KEY_VAULT_NAME: 
+  DOCKER_REGISTRY_SERVER_URL:   
+  REGISTRY_USERNAME:
+  REGISTRY_PASSWORD:
+
+
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs: 
+      image-version: ${{ steps.image-version.outputs.version }}
+    env: 
+      ENV: ghci
+
     steps:
-      # Checkout code
+    - name: azure login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: "Get docker registry credentials from Azure Key Vault"
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          echo "REGISTRY_USERNAME=$(az keyvault secret show --name ${{env.KEY_VAULT_SECRET_NAME_ACR_USERNAME }} --vault-name ${{ env.KEY_VAULT_NAME}} --query value -o tsv)" >> $GITHUB_ENV
+          echo "REGISTRY_PASSWORD=$(az keyvault secret show --name ${{env.KEY_VAULT_SECRET_NAME_ACR_PASSWORD }} --vault-name ${{ env.KEY_VAULT_NAME}} --query value -o tsv)" >> $GITHUB_ENV
+
+    - name: "Login to Docker Registry"
+      uses: azure/docker-login@v2
+      with:
+        login-server: ${{ env.DOCKER_REGISTRY_SERVER_URL }}
+        username: ${{ env.REGISTRY_USERNAME }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    - name: Set image version
+      id: image-version
+      run: |
+        echo "version=$(date +'%Y.%m.%d.%H.%M')" >> $GITHUB_OUTPUT
+
+      # checkout code
     - uses: actions/checkout@v3
 
       # Lint Bicep code 
@@ -35,6 +72,7 @@ jobs:
         chmod +x ./test-bicep.sh  
         ./test-bicep.sh  
 
+      # checkov scans    
     - name: run checkov scan
       uses: bridgecrewio/checkov-action@master
       with:
@@ -42,11 +80,13 @@ jobs:
         file: 'main.bicep'
       continue-on-error: true
 
+      # upload bicep build artifact 
     - name: upload bicep build artifact
       uses: actions/upload-artifact@v4
       with:
         name: bicep-build
         path: ./main.bicep
+
       
 
 
@@ -62,9 +102,9 @@ jobs:
     - uses: actions/checkout@v3
     
       # Log into Azure
-    - uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # - uses: azure/login@v2
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Deploy Bicep file
     - name: deploy to azure using bicep
@@ -94,9 +134,9 @@ jobs:
         name: bicep-build
         
           # Log into Azure
-    - uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # - uses: azure/login@v2
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
     
           # Deploy Bicep file
     - name: deploy to uat
@@ -109,14 +149,14 @@ jobs:
         deploymentName: ${{ env.USER_ALIAS }}-uat
         failOnStdErr: false
 
-        
+
 
   deploy-prod:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: deploy-uat
     environment:
-      name: 'Production'
+      name: 'Prod'
 
     steps: 
     - uses: actions/checkout@v3
@@ -125,9 +165,9 @@ jobs:
       with: 
         name: bicep-build
 
-    - uses: azure/login@v2
-      with: 
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # - uses: azure/login@v2
+    #   with: 
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: deploy to prod
       uses: azure/arm-deploy@v2
