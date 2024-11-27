@@ -5,9 +5,6 @@
         "environmentType": {
             "value": "prod"
         },
-        "userAlias": {
-            "value": "apayne"
-        },
         "postgresAdminPassword": {
             "value": "prod-password-from-keyvault"
         },
@@ -31,24 +28,6 @@
         },
         "location": {
             "value": "North Europe"
-        },
-        "appServiceAPIEnvVarENV": {
-            "value": "prod"
-        },
-        "appServiceAPIEnvVarDBHOST": {
-            "value": "apayne-dbsrv-prod.postgres.database.azure.com"
-        },
-        "appServiceAPIEnvVarDBNAME": {
-            "value": "apayne-db-prod"
-        },
-        "appServiceAPIEnvVarDBUSER": {
-            "value": "iebankdbadmin@apayne-dbsrv-prod"
-        },
-        "appServiceAPIDBHostFLASK_APP": {
-            "value": "app.py"
-        },
-        "appServiceAPIDBHostFLASK_DEBUG": {
-            "value": "0"
         },
         "containerRegistryName": {
             "value": "apayneacruat"
@@ -85,12 +64,7 @@
         },
         "keyVaultSecretNameAdminPassword1": {
             "value": "acr-password1"
-        }, 
-        "postgresSQLAdminServerPrincipalName": {
-            "value": "principal-name"
-        },
-        "postgresSQLAdminServerPrincipalObjectId": {
-            "value": "principal-object-id"
         }
+        
     }
 }

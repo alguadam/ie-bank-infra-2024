@@ -58,13 +58,13 @@
             ]
         },
         "keyVaultSecretNameAdminUsername": {
-            "value": "REPLACELATER"
+            "value": "acr-username"
         },
         "keyVaultSecretNameAdminPassword0": {
-            "value": "REPLACELATER"
+            "value": "acr-username"
         },
         "keyVaultSecretNameAdminPassword1": {
-            "value": "REPLACELATER"
+            "value": "acr-username"
         }
     }
 }
