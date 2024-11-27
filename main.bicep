@@ -99,7 +99,7 @@ module keyVault 'modules/key-vault.bicep' = {
     params: {
         keyVaultName: keyVaultName
         location: location
-        environmentType: environmentType
+        // environmentType: environmentType
         // enableVaultForDeployment: true
         roleAssignments: keyVaultRoleAssignments
         logAnalyticsWorkspaceId: logAnalyticsWorkspaceId

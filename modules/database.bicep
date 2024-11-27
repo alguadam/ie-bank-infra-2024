@@ -4,14 +4,13 @@ param postgreSQLAdminServicePrincipalObjectId string
 param postgreSQLAdminServicePrincipalName string
 param logAnalyticsWorkspaceId string
 
-
 param location string = resourceGroup().location
 @allowed([
   'dev'
   'uat'
   'prod'
 ])
-param environmentType string
+param environmentType string = 'dev'      //should i change this ti nonprod/prod
 
 
 module postgresSQLServer './db/postgres-server.bicep' = {
@@ -20,8 +19,8 @@ module postgresSQLServer './db/postgres-server.bicep' = {
     location: location
     environmentType: environmentType
     postgresSQLServerName: postgresSQLServerName
-    postgresSQLAdminServerPrincipalObjectId: postgreSQLAdminServicePrincipalObjectId
     postgresSQLAdminServerPrincipalName: postgreSQLAdminServicePrincipalName
+    postgresSQLAdminServerPrincipalObjectId: postgreSQLAdminServicePrincipalObjectId
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
   }
 }

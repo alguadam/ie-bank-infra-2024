@@ -11,7 +11,7 @@ param postgresSQLAdminServerPrincipalObjectId string
 param logAnalyticsWorkspaceId string 
 
 var skuName = environmentType == 'prod' ? 'Standard_B1ms' : (environmentType == 'uat' ? 'Standard_B1ms' : 'Standard_B1ms')
-var backupRetentionDays = environmentType == 'prod' ? 14 : (environmentType == 'uat' ? 7 : 3)
+var backupRetentionDays = environmentType == 'prod' ? 7 : (environmentType == 'uat' ? 3 : 3)
 
 
 resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
@@ -32,13 +32,15 @@ resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01
     }
     backup: {
       backupRetentionDays: backupRetentionDays
-      geoRedundantBackup: environmentType == 'prod' ? 'Enabled' : 'Disabled'
+      // geoRedundantBackup: environmentType == 'prod' ? 'Enabled' : 'Disabled'
+      geoRedundantBackup: 'Disabled'
     }
     highAvailability:{
       mode: 'Disabled'
       standbyAvailabilityZone: ''
     }
   }
+
 
   resource serverFirewallRules 'firewallRules@2022-12-01' = {
   name: 'AllowAllAzureServices'
@@ -71,6 +73,10 @@ resource postgresSQLDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-0
     workspaceId: logAnalyticsWorkspaceId
     logs: [
       {
+        category: 'PostgreSQLLogs'
+        enabled: true
+      }
+      {
         category: 'PostgreSQLFlexSessions'
         enabled: true
       }
@@ -84,10 +90,6 @@ resource postgresSQLDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-0
       }
       {
         category: 'PostgreSQLFlexQueryStoreWaitStats'
-        enabled: true
-      }
-      {
-        category: 'PostgreSQLLogs'
         enabled: true
       }
       {

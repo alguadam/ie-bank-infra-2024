@@ -1,13 +1,13 @@
-param postgresSQLDatabaseName string 
+param postgresSQLDatabaseName string  = 'ie-bank-db'
 param postgresSQLServerName string
 
-resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' existing = {
+resource existPostgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' existing = {
   name: postgresSQLServerName
 }
 
 resource postgresSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-12-01' = {
   name: postgresSQLDatabaseName
-  parent: postgresSQLServer
+  parent: existPostgresSQLServer
   properties: {
     charset: 'UTF8'
     collation: 'en_US.UTF8'
